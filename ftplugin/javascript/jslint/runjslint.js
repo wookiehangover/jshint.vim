@@ -1,10 +1,10 @@
 /*jslint laxbreak: true */
 
 if (typeof require != 'undefined') {
-    JSLINT = require('./jslint-core').JSLINT;
+    JSLINT = require('./jshint').JSLINT;
     print = require('sys').puts;
 } else {
-    load('jslint-core.js');
+    load('jshint.js');
 }
 
 // Import extra libraries if running in Rhino.
@@ -73,25 +73,16 @@ readSTDIN(function(body) {
     var ok = JSLINT(body)
       , i
       , error
-      , errorType
-      , nextError
-      , errorCount
-      , WARN = 'WARNING'
-      , ERROR = 'ERROR';
+      , errorCount;
 
     if (!ok) {
         errorCount = JSLINT.errors.length;
         for (i = 0; i < errorCount; i += 1) {
             error = JSLINT.errors[i];
-            errorType = WARN;
-            nextError = i < errorCount ? JSLINT.errors[i+1] : null;
             if (error && error.reason && error.reason.match(/^Stopping/) === null) {
-                // If jslint stops next, this was an actual error
-                if (nextError && nextError.reason && nextError.reason.match(/^Stopping/) !== null) {
-                    errorType = ERROR;
-                }
-                print([error.line, error.character, errorType, error.reason].join(":"));
+                print([error.line, error.character, error.reason].join(":"));
             }
         }
     }
 });
+
