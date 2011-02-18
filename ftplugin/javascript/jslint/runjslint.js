@@ -1,7 +1,7 @@
 /*jslint laxbreak: true */
 
 if (typeof require != 'undefined') {
-    JSLINT = require('./jshint').JSLINT;
+    JSHINT = require('./jshint').JSHINT;
     print = require('sys').puts;
 } else {
     load('jshint.js');
@@ -70,15 +70,15 @@ var readSTDIN = (function() {
 })();
 
 readSTDIN(function(body) {
-    var ok = JSLINT(body)
+    var ok = JSHINT(body)
       , i
       , error
       , errorCount;
 
     if (!ok) {
-        errorCount = JSLINT.errors.length;
+        errorCount = JSHINT.errors.length;
         for (i = 0; i < errorCount; i += 1) {
-            error = JSLINT.errors[i];
+            error = JSHINT.errors[i];
             if (error && error.reason && error.reason.match(/^Stopping/) === null) {
                 print([error.line, error.character, error.reason].join(":"));
             }
