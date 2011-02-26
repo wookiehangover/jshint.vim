@@ -159,21 +159,17 @@ function! s:JSLint()
 
   for error in split(b:jslint_output, "\n")
     " Match {line}:{char}:{message}
-    let b:parts = matchlist(error, '\v(\d+):(\d+):([A-Z]+):(.*)')
+    let b:parts = matchlist(error, '\v(\d+):(\d+):(.*)')
     if !empty(b:parts)
       let l:line = b:parts[1] + (b:firstline - 1 - len(s:jslintrc)) " Get line relative to selection
-      let l:errorMessage = b:parts[4]
+      let l:errorMessage = b:parts[3]
 
       " Store the error for an error under the cursor
       let s:matchDict = {}
       let s:matchDict['lineNum'] = l:line
       let s:matchDict['message'] = l:errorMessage
       let b:matchedlines[l:line] = s:matchDict
-      if b:parts[3] == 'ERROR'
-          let l:errorType = 'E'
-      else
-          let l:errorType = 'W'
-      endif
+      let l:errorType = 'W'
       if g:JSLintHighlightErrorLine == 1
         let s:mID = matchadd('JSLintError', '\v%' . l:line . 'l\S.*(\S|$)')
       endif

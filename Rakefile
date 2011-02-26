@@ -7,6 +7,7 @@ require 'pathname'
 
 PLUGIN = [
   "ftplugin/javascript/jslint.vim",
+  "ftplugin/javascript/jslint/jshint.js",
   "ftplugin/javascript/jslint/jslint-core.js",
   "ftplugin/javascript/jslint/runjslint.js",
   "ftplugin/javascript/jslint/runjslint.wsf",
