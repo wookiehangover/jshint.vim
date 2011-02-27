@@ -79,11 +79,11 @@ if has('win32')
 endif
 let s:cmd = "cd " . s:plugin_path . " && " . s:cmd . " " . s:plugin_path . "runjslint." . s:runjslint_ext
 
-let s:jslintrc_file = expand('~/.jslintrc')
-if filereadable(s:jslintrc_file)
-  let s:jslintrc = readfile(s:jslintrc_file)
+let s:jshintrc_file = expand('~/.jshintrc')
+if filereadable(s:jshintrc_file)
+  let s:jshintrc = readfile(s:jshintrc_file)
 else
-  let s:jslintrc = []
+  let s:jshintrc = []
 end
 
 
@@ -147,7 +147,7 @@ function! s:JSLint()
   let b:qf_list = []
   let b:qf_window_count = -1
 
-  let lines = join(s:jslintrc + getline(b:firstline, b:lastline), "\n")
+  let lines = join(s:jshintrc + getline(b:firstline, b:lastline), "\n")
   if len(lines) == 0
     return
   endif
@@ -161,7 +161,7 @@ function! s:JSLint()
     " Match {line}:{char}:{message}
     let b:parts = matchlist(error, '\v(\d+):(\d+):(.*)')
     if !empty(b:parts)
-      let l:line = b:parts[1] + (b:firstline - 1 - len(s:jslintrc)) " Get line relative to selection
+      let l:line = b:parts[1] + (b:firstline - 1 - len(s:jshintrc)) " Get line relative to selection
       let l:errorMessage = b:parts[3]
 
       " Store the error for an error under the cursor
