@@ -1,18 +1,12 @@
 jshint.vim
 =============
 
-Vim plugin and command line tool for running [JSLint][].
+Vim plugin and command line tool for running [JHLint][].
 
-[JSLint]: http://jshint.com/
+[JShint]: http://jshint.com/
 
-JSLint is a handy tool that spots errors and common mistakes in
+JSHint is a handy tool that spots errors and common mistakes in
 JavaScript code.
-
-The source code for jshint.vim is hosted at
-<http://github.com/hallettj/jshint.vim>.
-
-This is alpha software and is under heavy development.
-
 
 Installation
 -----------------------
@@ -102,76 +96,3 @@ to a specific error, where `[nr]` is a number.  The first error in the list is
 Once an error is fixed the corresponding quickfix line will disappear.
 
 [quickfix]: http://vimdoc.sourceforge.net/htmldoc/quickfix.html  "Vim documentation: quickfix"
-
-
-Alternative Plugins
----------------------
-
-There are other plugins for Vim that integrate [JavaScript Lint][].  JavaScript
-Lint is another JavaScript checker that is similar to JSLint.
-
-[JavaScript Lint]: http://www.javascriptlint.com/
-
-[jsl.vim][] uses Vim's compiler infrastructure making its use consistent with
-syntax checkers for other languages.
-
-[jsl.vim]: http://www.vim.org/scripts/script.php?script_id=2630
-
-[javaScriptLint.vim][] runs the contents of a JavaScript file through
-JavaScript Lint after the file's buffer is saved and places any warnings in the
-quickfix error window.
-
-[javaScriptLint.vim]: http://www.vim.org/scripts/script.php?script_id=2578
-
-
-Credits
----------
-
-- Jesse Hallett -- original author
-- Nathan Smith -- Windows compatibility, quickfix integration, better OS X
-  compatibility, support for node.js, and other improvements
-- Travis Jeffery -- Easy plugin installation with rake
-- Sam Goldstein -- Display of problem report for the current line and bug fixes
-- Bryan Chow -- Fixes for formatting issues and typos
-- Jeff Buttars -- Options to remove and to disable error highlighting
-- Rainux Luo -- Support for reading JSLint options from a `~/.jslintrc` file,
-  Pathogen compatibility on Windows
-- Pascal Hartig -- Support for running jslint with rhino and other updates
-- Martin Schürrer -- Fixing path issues and error handling
-- Nik Graf -- Documentation updates
-- Ian McCracken -- Real-time error checking
-- Luke Smith -- Enhancement of OS X support
-- Michael Smith -- Feature to customize JavaScript executable that is used by
-  setting JS_CMD environment variable
-- Szilágyi Szilveszter -- Fixes for bugs when running in Windows
-- Yasuhiro Matsumoto -- Pathogen compatibility and `:JSLintToggle` command
-- Ben Loveridge -- Integrated quickfix with automatic error checking
-- Brian Egan -- Documentation for enabling filetype plugins
-- Trent Mick -- Feature to ignore #! lines for compatibility with shell scripts
-
-
-License
----------
-
-Copyright (c) 2008-2011 Jesse Hallett <hallettj@gmail.com>, except where
-otherwise noted
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-of the Software, and to permit persons to whom the Software is furnished to do
-so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-The Software shall be used for Good, not Evil.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
