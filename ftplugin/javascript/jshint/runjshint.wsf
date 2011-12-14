@@ -1,5 +1,5 @@
 <job>
-<script src="jslint-core.js" language="javascript"></script>
+<script src="jshint-core.js" language="javascript"></script>
 <script language="javascript">
 /*global JSHINT load readline WScript */
 

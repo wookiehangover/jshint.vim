@@ -4,63 +4,63 @@
 " Enable/Disable highlighting of errors in source.
 " Default is Enable
 " To disable the highlighting put the line
-" let g:JSLintHighlightErrorLine = 0
+" let g:"HighlightErrorLine = 0
 " in your .vimrc
 "
-if exists("b:did_jslint_plugin")
+if exists("b:did_"_plugin")
   finish
 else
-  let b:did_jslint_plugin = 1
+  let b:did_"_plugin = 1
 endif
 
 let s:install_dir = expand('<sfile>:p:h')
 
-au BufLeave <buffer> call s:JSLintClear()
+au BufLeave <buffer> call s:"Clear()
 
-au BufEnter <buffer> call s:JSLint()
-au InsertLeave <buffer> call s:JSLint()
-"au InsertEnter <buffer> call s:JSLint()
-au BufWritePost <buffer> call s:JSLint()
+au BufEnter <buffer> call s:"()
+au InsertLeave <buffer> call s:"()
+"au InsertEnter <buffer> call s:"()
+au BufWritePost <buffer> call s:"()
 
 " due to http://tech.groups.yahoo.com/group/vimdev/message/52115
 if(!has("win32") || v:version>702)
-  au CursorHold <buffer> call s:JSLint()
-  au CursorHoldI <buffer> call s:JSLint()
+  au CursorHold <buffer> call s:"()
+  au CursorHoldI <buffer> call s:"()
 
-  au CursorHold <buffer> call s:GetJSLintMessage()
+  au CursorHold <buffer> call s:Get"Message()
 endif
 
-au CursorMoved <buffer> call s:GetJSLintMessage()
+au CursorMoved <buffer> call s:Get"Message()
 
-if !exists("g:JSLintHighlightErrorLine")
-  let g:JSLintHighlightErrorLine = 1
+if !exists("g:"HighlightErrorLine")
+  let g:"HighlightErrorLine = 1
 endif
 
-if !exists("*s:JSLintUpdate")
-  function s:JSLintUpdate()
-    silent call s:JSLint()
-    call s:GetJSLintMessage()
+if !exists("*s:"Update")
+  function s:"Update()
+    silent call s:"()
+    call s:Get"Message()
   endfunction
 endif
 
-if !exists(":JSLintUpdate")
-  command JSLintUpdate :call s:JSLintUpdate()
+if !exists(":"Update")
+  command "Update :call s:"Update()
 endif
-if !exists(":JSLintToggle")
-  command JSLintToggle :let b:jslint_disabled = exists('b:jslint_disabled') ? b:jslint_disabled ? 0 : 1 : 1
+if !exists(":"Toggle")
+  command "Toggle :let b:"_disabled = exists('b:"_disabled') ? b:"_disabled ? 0 : 1 : 1
 endif
 
-noremap <buffer><silent> dd dd:JSLintUpdate<CR>
-noremap <buffer><silent> dw dw:JSLintUpdate<CR>
-noremap <buffer><silent> u u:JSLintUpdate<CR>
-noremap <buffer><silent> <C-R> <C-R>:JSLintUpdate<CR>
+noremap <buffer><silent> dd dd:"Update<CR>
+noremap <buffer><silent> dw dw:"Update<CR>
+noremap <buffer><silent> u u:"Update<CR>
+noremap <buffer><silent> <C-R> <C-R>:"Update<CR>
 
 " Set up command and parameters
 if has("win32")
   let s:cmd = 'cscript /NoLogo '
-  let s:runjslint_ext = 'wsf'
+  let s:run"_ext = 'wsf'
 else
-  let s:runjslint_ext = 'js'
+  let s:run"_ext = 'js'
   if exists("$JS_CMD")
     let s:cmd = "$JS_CMD"
   elseif executable('/System/Library/Frameworks/JavaScriptCore.framework/Resources/jsc')
@@ -73,11 +73,11 @@ else
     echoerr('No JS interpreter found. Checked for jsc, js (spidermonkey), and node')
   endif
 endif
-let s:plugin_path = s:install_dir . "/jslint/"
+let s:plugin_path = s:install_dir . "/"/"
 if has('win32')
   let s:plugin_path = substitute(s:plugin_path, '/', '\', 'g')
 endif
-let s:cmd = "cd " . s:plugin_path . " && " . s:cmd . " " . s:plugin_path . "runjslint." . s:runjslint_ext
+let s:cmd = "cd " . s:plugin_path . " && " . s:cmd . " " . s:plugin_path . "run"." . s:run"_ext
 
 let s:jshintrc_file = expand('~/.jshintrc')
 if filereadable(s:jshintrc_file)
@@ -100,11 +100,11 @@ if !exists("*s:WideMsg")
 endif
 
 
-function! s:JSLintClear()
+function! s:"Clear()
   " Delete previous matches
   let s:matches = getmatches()
   for s:matchId in s:matches
-    if s:matchId['group'] == 'JSLintError'
+    if s:matchId['group'] == '"Error'
       call matchdelete(s:matchId['id'])
     endif
   endfor
@@ -113,16 +113,16 @@ function! s:JSLintClear()
   let b:cleared = 1
 endfunction
 
-function! s:JSLint()
-  if exists("b:jslint_disabled") && b:jslint_disabled == 1
+function! s:"()
+  if exists("b:"_disabled") && b:"_disabled == 1
     return
   endif
 
-  highlight link JSLintError SpellBad
+  highlight link "Error SpellBad
 
   if exists("b:cleared")
     if b:cleared == 0
-      call s:JSLintClear()
+      call s:"Clear()
     endif
     let b:cleared = 1
   endif
@@ -151,13 +151,13 @@ function! s:JSLint()
   if len(lines) == 0
     return
   endif
-  let b:jslint_output = system(s:cmd, lines . "\n")
+  let b:"_output = system(s:cmd, lines . "\n")
   if v:shell_error
-    echoerr 'could not invoke JSLint!'
-    let b:jslint_disabled = 1
+    echoerr 'could not invoke "!'
+    let b:"_disabled = 1
   end
 
-  for error in split(b:jslint_output, "\n")
+  for error in split(b:"_output, "\n")
     " Match {line}:{char}:{message}
     let b:parts = matchlist(error, '\v(\d+):(\d+):(.*)')
     if !empty(b:parts)
@@ -170,8 +170,8 @@ function! s:JSLint()
       let s:matchDict['message'] = l:errorMessage
       let b:matchedlines[l:line] = s:matchDict
       let l:errorType = 'W'
-      if g:JSLintHighlightErrorLine == 1
-        let s:mID = matchadd('JSLintError', '\v%' . l:line . 'l\S.*(\S|$)')
+      if g:"HighlightErrorLine == 1
+        let s:mID = matchadd('"Error', '\v%' . l:line . 'l\S.*(\S|$)')
       endif
       " Add line to match list
       call add(b:matched, s:matchDict)
@@ -189,32 +189,32 @@ function! s:JSLint()
     endif
   endfor
 
-  if exists("s:jslint_qf")
-    " if jslint quickfix window is already created, reuse it
-    call s:ActivateJSLintQuickFixWindow()
+  if exists("s:"_qf")
+    " if " quickfix window is already created, reuse it
+    call s:Activate"QuickFixWindow()
     call setqflist(b:qf_list, 'r')
   else
-    " one jslint quickfix window for all buffers
+    " one " quickfix window for all buffers
     call setqflist(b:qf_list, '')
-    let s:jslint_qf = s:GetQuickFixStackCount()
+    let s:"_qf = s:GetQuickFixStackCount()
   endif
   let b:cleared = 0
 endfunction
 
 let b:showing_message = 0
 
-if !exists("*s:GetJSLintMessage")
-  function s:GetJSLintMessage()
+if !exists("*s:Get"Message")
+  function s:Get"Message()
     let s:cursorPos = getpos(".")
 
-    " Bail if RunJSLint hasn't been called yet
+    " Bail if Run" hasn't been called yet
     if !exists('b:matchedlines')
       return
     endif
 
     if has_key(b:matchedlines, s:cursorPos[1])
-      let s:jslintMatch = get(b:matchedlines, s:cursorPos[1])
-      call s:WideMsg(s:jslintMatch['message'])
+      let s:"Match = get(b:matchedlines, s:cursorPos[1])
+      call s:WideMsg(s:"Match['message'])
       let b:showing_message = 1
       return
     endif
@@ -245,18 +245,18 @@ if !exists("*s:GetQuickFixStackCount")
     endfunction
 endif
 
-if !exists("*s:ActivateJSLintQuickFixWindow")
-    function s:ActivateJSLintQuickFixWindow()
+if !exists("*s:Activate"QuickFixWindow")
+    function s:Activate"QuickFixWindow()
         try
             silent colder 9 " go to the bottom of quickfix stack
         catch /E380:/
         endtry
 
-        if s:jslint_qf > 0
+        if s:"_qf > 0
             try
-                exe "silent cnewer " . s:jslint_qf
+                exe "silent cnewer " . s:"_qf
             catch /E381:/
-                echoerr "Could not activate JSLint Quickfix Window."
+                echoerr "Could not activate " Quickfix Window."
             endtry
         endif
     endfunction
