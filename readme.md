@@ -3,15 +3,20 @@
 A [jshint](https://github.com/jshint/jshint) flavor of [hallettj's
 jslint.vim](https://github.com/hallettj/jslint.vim).
 
-### Installation
+v0.9.0
+
+## Installation
+
+**[Node.js](http://nodejs.org) must be in your path.**
 
 Recommended for use with [tpope's
 Pathogen](https://github.com/tpope/vim-pathogen) plugin runtime
 management system.
 
-**Node.js must be in your path.**
+If you're old school or not into pathogen, there a Makefile to copy
+everything into your `~/.vim` directory.
 
-### Usage
+## Usage
 
 * This plugin automatically checks the JavaScript source and highlights the lines with errors.
 
