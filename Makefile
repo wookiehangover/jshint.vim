@@ -9,3 +9,6 @@ install:
 	@cp ${JSHINT_RUNNER} ${VIM}/ftplugin/javascript
 	@echo "jshint.vim was successfully installed!"
 
+update:
+	@echo "Getting latest jshint from npm..."
+	@cd ./ftplugin/javascript/jshint && npm install jshint
