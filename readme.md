@@ -27,11 +27,7 @@ It also will display more information about the error in the commandline if the 
 * You can toggle automatic checking on or off with the command
   `:JSHintToggle`. You can modify your `~/.vimrc` file to bind this command to a key or to turn off error checking by default.
 
-* (optional) Add any valid JSHint options to `~/.jshintrc` file, they
-  will be used as global options for all JavaScript files. For example:
-
-      /*jshint browser: true, laxcomma, true, asi: true */
-      /*global deepEqual, equal, notEqual, test, ok, raises */
+* (optional) jshint.vim uses the same config as the jshint-node cli command. You can add jshint options to your `~/.jshintrc` or the `.jshintrc` in the root of your project directory. [Example jshintrc](https://github.com/oryband/dotfiles/blob/master/jshintrc)
 
 To disable error highlighting altogether add this line to your ~/.vimrc file:
 
