@@ -61,7 +61,7 @@ let s:plugin_path = s:install_dir . "/jshint/"
 if has('win32')
   let s:plugin_path = substitute(s:plugin_path, '/', '\', 'g')
 endif
-let s:cmd = "cd " . s:plugin_path . " && node " . s:plugin_path . "runner.js"
+let s:cmd = "node " . s:plugin_path . "runner.js"
 
 " WideMsg() prints [long] message up to (&columns-1) length
 " guaranteed without "Press Enter" prompt.
