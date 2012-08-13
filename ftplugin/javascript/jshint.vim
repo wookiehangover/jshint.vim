@@ -84,6 +84,10 @@ endif
 
 
 function! s:JSHintClear()
+  if exists("b:jshint_disabled") && b:jshint_disabled == 1
+    return
+  endif
+    
   " Delete previous matches
   let s:matches = getmatches()
   for s:matchId in s:matches
