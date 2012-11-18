@@ -19,7 +19,7 @@ stdin.on('data', function(chunk) {
 
 stdin.on('end', function() {
   var error
-    , ok = jshint( body.join('\n') );
+    , ok = jshint( body.join('\n'), options );
 
   if( ok ){
     return;
