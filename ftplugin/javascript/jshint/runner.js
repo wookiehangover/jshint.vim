@@ -1,7 +1,17 @@
 var jshint = require('jshint').JSHINT
   , puts = require('util').puts
   , stdin = process.openStdin()
-  , body = [];
+  , body = []
+  , path= require('path')
+  , fs= require('fs')
+  , options = fs.readFileSync(path.join(__dirname,'.jshintrc')).toString('utf8');
+
+
+try{
+	options = JSON.parse(options);
+}catch(e){
+	console.log('could not parse options')
+}
 
 stdin.on('data', function(chunk) {
   body.push(chunk);
