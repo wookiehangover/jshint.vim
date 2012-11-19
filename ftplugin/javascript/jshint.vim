@@ -50,10 +50,10 @@ if !exists(":JSHintToggle")
   command JSHintToggle :let b:jshint_disabled = exists('b:jshint_disabled') ? b:jshint_disabled ? 0 : 1 : 1
 endif
 
-noremap <buffer><silent> dd dd:JSHintUpdate<CR>
-noremap <buffer><silent> dw dw:JSHintUpdate<CR>
-noremap <buffer><silent> u u:JSHintUpdate<CR>
-noremap <buffer><silent> <C-R> <C-R>:JSHintUpdate<CR>
+nnoremap <buffer><silent> dd dd:JSHintUpdate<CR>
+nnoremap <buffer><silent> dw dw:JSHintUpdate<CR>
+nnoremap <buffer><silent> u u:JSHintUpdate<CR>
+nnoremap <buffer><silent> <C-R> <C-R>:JSHintUpdate<CR>
 
 " Set up command and parameters
 
