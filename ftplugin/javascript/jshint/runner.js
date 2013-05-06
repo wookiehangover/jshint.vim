@@ -2,11 +2,15 @@ var jshint = require('jshint').JSHINT
   , puts = require('util').puts
   , stdin = process.openStdin()
   , fs = require('fs')
-  , jshintrc = process.argv[2] ? fs.readFileSync(process.argv[2]) : ''
+  , jshintrc = process.argv[2] ? fs.readFileSync(process.argv[2], 'utf8') : ''
   , body = [];
 
 function allcomments(s) {
-  return /^\s*\/\*(?:[^\*]+|\*(?!\/))\*\/\s*$|^\s*\/\/[^\n]\s*$/.test(s);
+  return /^\s*\/\/[^\n]\s*$|^\s*\/\*(?:[^\*]+|\*(?!\/))\*\/\s*$/.test(s);
+}
+
+function removecomments(s) {
+  return s.replace(/\/\/[^\n]|\/\*(?:[^\*]+|\*(?!\/))\*\//g, '');
 }
 
 stdin.on('data', function(chunk) {
@@ -20,10 +24,9 @@ stdin.on('end', function() {
   if (allcomments(jshintrc)) {
     body.push('\n' + jshintrc);
   } else {
-    // Try standard `.jshintrc` JSON format. Use `eval` because `.jshintrc`
-    // files might contain comments.
+    // Try standard `.jshintrc` JSON format.
     try {
-      options = eval('(' + jshintrc + '\n)');
+      options = JSON.parse(removecomments(jshintrc));
     } catch(e) {
       puts('1:1:Invalid ~/.jshintrc file');
     }
