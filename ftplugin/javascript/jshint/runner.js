@@ -19,10 +19,13 @@ stdin.on('data', function(chunk) {
 
 stdin.on('end', function() {
   var error
-    , options;
+    , options
+    , prefix = ''
+    , offset = 0;
 
   if (allcomments(jshintrc)) {
-    body.push('\n' + jshintrc);
+    prefix = jshintrc + '\n';
+    offset = prefix.split('\n').length - 1;
   } else {
     // Try standard `.jshintrc` JSON format.
     try {
@@ -32,7 +35,7 @@ stdin.on('end', function() {
     }
   }
 
-  if( jshint( body.join(''), options ) ){
+  if( jshint( prefix + body.join(''), options ) ){
     return;
   }
 
@@ -41,7 +44,7 @@ stdin.on('end', function() {
   for( var i = 0, len = data.errors.length; i < len; i += 1 ){
     error = data.errors[i];
     if( error && error.reason ){
-      puts( [error.line, error.character, error.reason].join(':') );
+      puts( [error.line - offset, error.character, error.reason].join(':') );
     }
   }
 
