@@ -6,7 +6,7 @@ var jshint = require('jshint').JSHINT
   , body = [];
 
 function allcomments(s) {
-  return /^\s*\/\/[^\n]*\s*$|^\s*\/\*(?:[^\*]|\*(?!\/))*\*\/\s*$/.test(s);
+  return /^(?:\s*\/\/[^\n]*\s*|\s*\/\*(?:[^\*]|\*(?!\/))*\*\/\s*)*$/.test(s);
 }
 
 function removecomments(s) {
