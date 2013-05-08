@@ -10,7 +10,10 @@ function allcomments(s) {
 }
 
 function removecomments(s) {
-  return s.replace(/\/\/[^\n]*|\/\*(?:[^\*]|\*(?!\/))*\*\//g, ' ');
+  var re = /(["'])(?:[^\1]|\\\1|)*\1|\/\/[^\n]*|\/\*(?:[^\*]|\*(?!\/))*\*\//g;
+  return s.replace(re, function(x) {
+    return /^["']/.test(x) ? x : ' ';
+  });
 }
 
 stdin.on('data', function(chunk) {
