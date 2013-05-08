@@ -65,9 +65,7 @@ let s:cmd = "cd " . s:plugin_path . " && node " . s:plugin_path . "runner.js"
 
 let s:jshintrc_file = expand('~/.jshintrc')
 if filereadable(s:jshintrc_file)
-  let s:jshintrc = readfile(s:jshintrc_file)
-else
-  let s:jshintrc = []
+  let s:cmd = s:cmd . " " . shellescape(s:jshintrc_file)
 end
 
 " WideMsg() prints [long] message up to (&columns-1) length
@@ -134,7 +132,7 @@ function! s:JSHint()
   let b:qf_list = []
   let b:qf_window_count = -1
 
-  let lines = join(s:jshintrc + getline(b:firstline, b:lastline), "\n")
+  let lines = join(getline(b:firstline, b:lastline), "\n")
   if len(lines) == 0
     return
   endif
@@ -149,7 +147,7 @@ function! s:JSHint()
     " Match {line}:{char}:{message}
     let b:parts = matchlist(error, '\v(\d+):(\d+):(.*)')
     if !empty(b:parts)
-      let l:line = b:parts[1] + (b:firstline - 1 - len(s:jshintrc)) " Get line relative to selection
+      let l:line = b:parts[1] + (b:firstline - 1) " Get line relative to selection
       let l:errorMessage = b:parts[3]
 
       " Store the error for an error under the cursor
