@@ -6,11 +6,17 @@ var jshint = require('jshint').JSHINT
   , body = [];
 
 function allcomments(s) {
-  return /^\s*\/\/[^\n]\s*$|^\s*\/\*(?:[^\*]+|\*(?!\/))\*\/\s*$/.test(s);
+  return /^(?:\s*\/\/[^\n]*\s*|\s*\/\*(?:[^\*]|\*(?!\/))*\*\/\s*)*$/.test(s);
 }
 
+// This function will produce incorrect results for certain pathological
+// expressions involving regexp literals. This is okay, since it's only meant
+// to be used on JSON-with-comments, and JSON doesn't have regexp literals.
 function removecomments(s) {
-  return s.replace(/\/\/[^\n]|\/\*(?:[^\*]+|\*(?!\/))\*\//g, '');
+  var re = /(["'])(?:[^\1]|\\\1|)*\1|\/\/[^\n]*|\/\*(?:[^\*]|\*(?!\/))*\*\//g;
+  return s.replace(re, function(x) {
+    return /^["']/.test(x) ? x : ' ';
+  });
 }
 
 stdin.on('data', function(chunk) {
