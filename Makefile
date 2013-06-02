@@ -12,3 +12,5 @@ install:
 update:
 	@echo "Getting latest jshint from npm..."
 	@cd ./ftplugin/javascript/jshint && npm update
+
+.PHONY: install update
