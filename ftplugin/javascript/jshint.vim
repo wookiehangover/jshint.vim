@@ -63,10 +63,30 @@ if has('win32')
 endif
 let s:cmd = "cd " . s:plugin_path . " && node " . s:plugin_path . "runner.js"
 
-let s:jshintrc_file = expand('~/.jshintrc')
-if filereadable(s:jshintrc_file)
-  let s:cmd = s:cmd . " " . shellescape(s:jshintrc_file)
-end
+" FindRc() will try to find a .jshintrc up the current path string
+" If it cannot find one it will try looking in the home directory
+" finally it will return an empty list indicating jshint should use
+" the defaults.
+if !exists("*s:FindRc")
+  function s:FindRc(path)
+    let l:filename = '/.jshintrc'
+    let l:jshintrc_file = expand(a:path) . l:filename
+    if filereadable(l:jshintrc_file)
+      let s:jshintrc = [join(readfile(l:jshintrc_file), '')]
+    elseif len(a:path) > 1
+      call s:FindRc(fnamemodify(expand(a:path), ":h"))
+    else 
+      let s:jshintrc_file = expand('~') . l:filename
+      if filereadable(l:jshintrc_file)
+        let s:jshintrc = [join(readfile(l:jshintrc_file), '')]
+      else
+        let s:jshintrc = []
+      end
+    endif
+  endfun
+endif
+
+call s:FindRc(expand("%:p:h"))
 
 " WideMsg() prints [long] message up to (&columns-1) length
 " guaranteed without "Press Enter" prompt.
@@ -79,7 +99,6 @@ if !exists("*s:WideMsg")
     let &ruler=x | let &showcmd=y
   endfun
 endif
-
 
 function! s:JSHintClear()
   if exists("b:jshint_disabled") && b:jshint_disabled == 1
