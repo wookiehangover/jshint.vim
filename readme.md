@@ -18,35 +18,19 @@ everything into your `~/.vim` directory.
 
 ## Usage
 
-*Automatically*
+#### Automatically
 This plugin automatically checks the JavaScript source and highlights the lines 
 with errors. It also will display more information about the error in the 
 commandline if the curser is in the same line.
 
-*`:JSHintUpdate`*
+#### `:JSHintUpdate`
 Manually check the file
 
-`:JSHintToggle`
+#### `:JSHintToggle`
 Toggle automatic checking of a file. This can also be set in the `~/.vimrc` file
 to bind this command to a key or to turn off error checking by default.
 
-## Configuration ##
-
-### ~/.vimrc Options ###
-*`let g:JSHintHighlightErrorLine = 0`*
-Disable error highlighting
-
-### JSHint options ###
-Add any valid JSHint options to a `~/.jshintrc` file. These options will be
-used as global options for all JavaScript files. There is an example file at
-[Official Example](https://github.com/jshint/jshint/blob/master/examples/.jshintrc)
-
-      /*jshint browser: true, laxcomma, true, asi: true */
-      /*global deepEqual, equal, notEqual, test, ok, raises */
-
-
 ### Working with quickfix
-
 When automatic error checking is enabled, jshint.vim will automatically display
 errors in the [quickfix][] window in addition to highlighting them.
 
@@ -58,3 +42,19 @@ to a specific error, where `[nr]` is a number.  The first error in the list is
 Once an error is fixed the corresponding quickfix line will disappear.
 
 [quickfix]: http://vimdoc.sourceforge.net/htmldoc/quickfix.html  "Vim documentation: quickfix"
+
+## Configuration
+
+### ~/.vimrc Options
+
+#### `let g:JSHintHighlightErrorLine = 0`
+Disable error highlighting
+
+### JSHint options
+Add any valid JSHint options to a `~/.jshintrc` file. These options will be
+used as global options for all JavaScript files. There is an example file at
+[Official Example](https://github.com/jshint/jshint/blob/master/examples/.jshintrc)
+
+      /*jshint browser: true, laxcomma, true, asi: true */
+      /*global deepEqual, equal, notEqual, test, ok, raises */
+
