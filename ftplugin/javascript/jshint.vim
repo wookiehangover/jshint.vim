@@ -15,10 +15,11 @@ endif
 
 let s:install_dir = expand('<sfile>:p:h')
 
-au BufLeave <buffer> call s:JSHintClear()
+" Only check on saving
+" au BufLeave <buffer> call s:JSHintClear()
+" au BufEnter <buffer> call s:JSHint()
+" au InsertLeave <buffer> call s:JSHint()
 
-au BufEnter <buffer> call s:JSHint()
-au InsertLeave <buffer> call s:JSHint()
 "au InsertEnter <buffer> call s:JSHint()
 au BufWritePost <buffer> call s:JSHint()
 
