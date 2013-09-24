@@ -17,8 +17,17 @@ let s:install_dir = expand('<sfile>:p:h')
 
 au BufLeave <buffer> call s:JSHintClear()
 
-au BufEnter <buffer> call s:JSHint()
-au InsertLeave <buffer> call s:JSHint()
+" Find out when JSHint should update
+
+if !exists("g:JSHintUpdateWriteOnly")
+  let g:JSHintUpdateWriteOnly = 0
+endif
+
+if g:JSHintUpdateWriteOnly == 0
+  au BufEnter <buffer> call s:JSHint()
+  au InsertLeave <buffer> call s:JSHint()
+endif
+
 "au InsertEnter <buffer> call s:JSHint()
 au BufWritePost <buffer> call s:JSHint()
 
@@ -75,7 +84,7 @@ if !exists("*s:FindRc")
       let s:jshintrc_file = l:jshintrc_file
     elseif len(a:path) > 1
       call s:FindRc(fnamemodify(expand(a:path), ":h"))
-    else 
+    else
       let l:jshintrc_file = expand('~') . l:filename
       if filereadable(l:jshintrc_file)
         let s:jshintrc_file = l:jshintrc_file
@@ -104,7 +113,7 @@ function! s:JSHintClear()
   if exists("b:jshint_disabled") && b:jshint_disabled == 1
     return
   endif
-    
+
   " Delete previous matches
   let s:matches = getmatches()
   for s:matchId in s:matches
