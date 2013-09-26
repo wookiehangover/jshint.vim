@@ -255,6 +255,7 @@ if !exists("*s:ActivateJSHintQuickFixWindow")
         try
             silent lolder 9 " go to the bottom of quickfix stack
         catch /E380:/
+        catch /E776:/
         endtry
 
         if s:jshint_qf > 0
