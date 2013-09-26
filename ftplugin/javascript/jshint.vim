@@ -197,10 +197,10 @@ function! s:JSHint()
   if exists("s:jshint_qf")
     " if jshint quickfix window is already created, reuse it
     call s:ActivateJSHintQuickFixWindow()
-    call setqflist(b:qf_list, 'r')
+    call setloclist(b:qf_list, 'r')
   else
     " one jshint quickfix window for all buffers
-    call setqflist(b:qf_list, '')
+    call setloclist(b:qf_list, '')
     let s:jshint_qf = s:GetQuickFixStackCount()
   endif
   let b:cleared = 0
@@ -235,13 +235,13 @@ if !exists("*s:GetQuickFixStackCount")
     function s:GetQuickFixStackCount()
         let l:stack_count = 0
         try
-            silent colder 9
+            silent lolder 9
         catch /E380:/
         endtry
 
         try
             for i in range(9)
-                silent cnewer
+                silent lnewer
                 let l:stack_count = l:stack_count + 1
             endfor
         catch /E381:/
@@ -253,13 +253,13 @@ endif
 if !exists("*s:ActivateJSHintQuickFixWindow")
     function s:ActivateJSHintQuickFixWindow()
         try
-            silent colder 9 " go to the bottom of quickfix stack
+            silent lolder 9 " go to the bottom of quickfix stack
         catch /E380:/
         endtry
 
         if s:jshint_qf > 0
             try
-                exe "silent cnewer " . s:jshint_qf
+                exe "silent lnewer " . s:jshint_qf
             catch /E381:/
                 echoerr "Could not activate JSHint Quickfix Window."
             endtry
