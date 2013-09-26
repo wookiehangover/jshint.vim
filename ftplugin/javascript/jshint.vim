@@ -197,10 +197,10 @@ function! s:JSHint()
   if exists("s:jshint_qf")
     " if jshint quickfix window is already created, reuse it
     call s:ActivateJSHintQuickFixWindow()
-    call setloclist(b:qf_list, 'r')
+    call setloclist(0, b:qf_list, 'r')
   else
     " one jshint quickfix window for all buffers
-    call setloclist(b:qf_list, '')
+    call setloclist(0, b:qf_list, '')
     let s:jshint_qf = s:GetQuickFixStackCount()
   endif
   let b:cleared = 0
