@@ -11,24 +11,25 @@ v0.9.0
 
 Recommended for use with [tpope's
 Pathogen](https://github.com/tpope/vim-pathogen) plugin runtime
-management system.
+management system or [vundle](https://github.com/gmarik/vundle).
 
 If you're old school or not into pathogen, there is a Makefile to copy 
 everything into your `~/.vim` directory.
 
 ## Usage
 
-#### Automatically
+### Automatically
 This plugin automatically checks the JavaScript source and highlights the lines 
 with errors. It also will display more information about the error in the 
 commandline if the curser is in the same line.
 
-#### `:JSHintUpdate`
-Manually check the file
+### Manually check the file
+`:JSHintUpdate`
 
-#### `:JSHintToggle`
-Toggle automatic checking of a file. This can also be set in the `~/.vimrc` file
-to bind this command to a key or to turn off error checking by default.
+### Toggle automatic checking of a file
+This can also be set in the `~/.vimrc` file to bind this command to a key or to 
+turn off error checking by default.
+`:JSHintToggle`
 
 ### Working with quickfix
 When automatic error checking is enabled, jshint.vim will automatically display
@@ -47,8 +48,8 @@ Once an error is fixed the corresponding quickfix line will disappear.
 
 ### ~/.vimrc Options
 
-#### `let g:JSHintHighlightErrorLine = 0`
-Disable error highlighting
+#### Disable error highlighting
+`let g:JSHintHighlightErrorLine = 0`
 
 ### JSHint options
 Add any valid JSHint options to a `~/.jshintrc` file. These options will be
@@ -57,4 +58,3 @@ used as global options for all JavaScript files. There is an example file at
 
       /*jshint browser: true, laxcomma, true, asi: true */
       /*global deepEqual, equal, notEqual, test, ok, raises */
-
