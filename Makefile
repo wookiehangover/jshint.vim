@@ -1,16 +1,17 @@
 VIM = ${HOME}/.vim
-JSHINT_VIM = ./ftplugin/javascript/jshint.vim
-JSHINT_RUNNER = ./ftplugin/javascript/jshint.vim
+JS_FOLDER = ftplugin/javascript
+JSHINT_VIM = ./${JS_FOLDER}/jshint.vim
+JSHINT_RUNNER = ./${JS_FOLDER}/jshint
 
 install:
 	@echo "Installing jshint.vim..."
-	@mkdir -p ${VIM}/ftplugin/javascript
-	@cp ${JSHINT_VIM} ${VIM}/ftplugin/javascript
-	@cp ${JSHINT_RUNNER} ${VIM}/ftplugin/javascript
+	@mkdir -p ${VIM}/${JS_FOLDER}
+	@cp ${JSHINT_VIM} ${VIM}/${JS_FOLDER}
+	@cp -r ${JSHINT_RUNNER} ${VIM}/${JS_FOLDER}
 	@echo "jshint.vim was successfully installed!"
 
 update:
 	@echo "Getting latest jshint from npm..."
-	@cd ./ftplugin/javascript/jshint && npm update
+	@cd ./${JS_FOLDER}/jshint && npm update
 
 .PHONY: install update
