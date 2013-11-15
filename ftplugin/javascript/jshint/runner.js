@@ -1,12 +1,14 @@
-var jshint = require('jshint').JSHINT
-  , puts = require('util').puts
-  , stdin = process.openStdin()
-  , fs = require('fs')
-  , jshintrc = process.argv[2] ? fs.readFileSync(process.argv[2], 'utf8') : ''
-  , body = [];
+'use strict';
+
+var jshint = require('jshint').JSHINT,
+  puts = require('util').puts,
+  stdin = process.openStdin(),
+  fs = require('fs'),
+  jshintrc = process.argv[2] ? fs.readFileSync(process.argv[2], 'utf8') : '',
+  body = [];
 
 function allcomments(s) {
-  return /^(?:\s*\/\/[^\n]*\s*|\s*\/\*(?:[^\*]|\*(?!\/))*\*\/\s*)*$/.test(s);
+  return (/^(?:\s*\/\/[^\n]*\s*|\s*\/\*(?:[^\*]|\*(?!\/))*\*\/\s*)*$/).test(s);
 }
 
 // This function will produce incorrect results for certain pathological
@@ -15,7 +17,7 @@ function allcomments(s) {
 function removecomments(s) {
   var re = /(["'])(?:[^\1]|\\\1|)*\1|\/\/[^\n]*|\/\*(?:[^\*]|\*(?!\/))*\*\//g;
   return s.replace(re, function(x) {
-    return /^["']/.test(x) ? x : ' ';
+    return (/^["']/).test(x) ? x : ' ';
   });
 }
 
@@ -24,10 +26,13 @@ stdin.on('data', function(chunk) {
 });
 
 stdin.on('end', function() {
-  var error
-    , options
-    , prefix = ''
-    , offset = 0;
+  var error,
+    i,
+    len,
+    options,
+    prefix = '',
+    offset = 0,
+    data;
 
   if (allcomments(jshintrc)) {
     prefix = jshintrc + '\n';
@@ -45,9 +50,9 @@ stdin.on('end', function() {
     return;
   }
 
-  var data = jshint.data();
+  data = jshint.data();
 
-  for( var i = 0, len = data.errors.length; i < len; i += 1 ){
+  for( i = 0, len = data.errors.length; i < len; i += 1 ){
     error = data.errors[i];
     if( error && error.reason ){
       puts( [error.line - offset, error.character, error.reason].join(':') );
