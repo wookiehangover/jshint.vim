@@ -1,8 +1,10 @@
 {
   "name": "jshint.vim",
   "version": "0.0.0",
+  "description": "jshint for vim",
+  "repository": "https://github.com/wookiehangover/jshint.vim.git",
   "dependencies": {
-    "jshint": "~2.1.2"
+    "jshint": "~2.3.0"
   },
   "license": "BSD"
 }
