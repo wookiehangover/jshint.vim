@@ -13,6 +13,23 @@ Recommended for use with [tpope's Pathogen](https://github.com/tpope/vim-pathoge
 
 If you're old school or not into pathogen, there is a Makefile to copy everything into your `~/.vim` directory.
 
+### Install with [Vundle](https://github.com/gmarik/vundle)
+
+Add to vimrc:
+
+`Bundle "wookiehangover/jshint.vim"`
+
+And install it:
+
+```vim
+:so ~/.vimrc
+:BundleInstall
+```
+
+### Install with [pathogen](https://github.com/tpope/vim-pathogen)
+
+`git clone https://github.com/wookiehangover/jshint.vim.git ~/.vim/bundle/jshint.vim`
+
 ## Usage
 
 ### Automatically
