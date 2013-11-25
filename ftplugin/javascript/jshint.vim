@@ -17,8 +17,17 @@ let s:install_dir = expand('<sfile>:p:h')
 
 au BufLeave <buffer> call s:JSHintClear()
 
-au BufEnter <buffer> call s:JSHint()
-au InsertLeave <buffer> call s:JSHint()
+" Find out when JSHint should update
+
+if !exists("g:JSHintUpdateWriteOnly")
+  let g:JSHintUpdateWriteOnly = 0
+endif
+
+if g:JSHintUpdateWriteOnly == 0
+  au BufEnter <buffer> call s:JSHint()
+  au InsertLeave <buffer> call s:JSHint()
+endif
+
 "au InsertEnter <buffer> call s:JSHint()
 au BufWritePost <buffer> call s:JSHint()
 
