@@ -167,7 +167,8 @@ function! s:JSHint()
 
   let b:jshint_output = system(s:cmd . " " . s:jshintrc_file, lines . "\n")
   if v:shell_error
-    echoerr 'could not invoke JSHint!'
+    echoerr 'could not invoke JSHint: '
+    echom b:jshint_output
     let b:jshint_disabled = 1
   end
 
