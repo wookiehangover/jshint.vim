@@ -13,7 +13,7 @@ else
   let b:did_jshint_plugin = 1
 endif
 
-"bail out for vim-fugitive file paths...
+" Bail out for vim-fugitive file paths...
 if strridx(expand("%:p"), "fugitive") == 0
   finish
 endif
