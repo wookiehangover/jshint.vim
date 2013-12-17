@@ -15,7 +15,7 @@ function allcomments(s) {
 // expressions involving regexp literals. This is okay, since it's only meant
 // to be used on JSON-with-comments, and JSON doesn't have regexp literals.
 function removecomments(s) {
-  var re = /(["'])(?:[^\1]|\\\1|)*\1|\/\/[^\n]*|\/\*(?:[^\*]|\*(?!\/))*\*\//g;
+  var re = /("([^"]|\\")*")|('([^']|\\')*')|\/\/[^\n]*|\/\*(?:[^\*]|\*(?!\/))*\*\//g;
   return s.replace(re, function(x) {
     return (/^["']/).test(x) ? x : ' ';
   });
