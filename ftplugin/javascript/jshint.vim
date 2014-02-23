@@ -79,11 +79,11 @@ let s:cmd = "cd " . s:plugin_path . " && node " . s:plugin_path . "runner.js"
 if !exists("*s:FindRc")
   function s:FindRc(path)
     let l:filename = '/.jshintrc'
-    let l:jshintrc_file = expand(a:path) . l:filename
+    let l:jshintrc_file = a:path . l:filename
     if filereadable(l:jshintrc_file)
       let s:jshintrc_file = l:jshintrc_file
     elseif len(a:path) > 1
-      call s:FindRc(fnamemodify(expand(a:path), ":h"))
+      call s:FindRc(fnamemodify(a:path, ":h:h"))
     else
       let l:jshintrc_file = expand('~') . l:filename
       if filereadable(l:jshintrc_file)
