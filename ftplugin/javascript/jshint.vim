@@ -14,7 +14,7 @@ else
 endif
 
 " Bail out for vim-fugitive file paths...
-if strridx(expand("%:p"), "fugitive") == 0
+if stridx(expand("%:p"), "fugitive:///") == 0
   finish
 endif
 
