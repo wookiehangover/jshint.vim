@@ -46,7 +46,14 @@ stdin.on('end', function() {
     }
   }
 
-  if( jshint( prefix + body.join(''), options ) ){
+  var globals;
+
+  if (options && options.globals) {
+    globals = options.globals;
+    delete options.globals;
+  }
+
+  if( jshint( prefix + body.join(''), options, globals ) ){
     return;
   }
 
