@@ -70,7 +70,7 @@ let s:plugin_path = s:install_dir . "/jshint/"
 if has('win32')
   let s:plugin_path = substitute(s:plugin_path, '/', '\', 'g')
 endif
-let s:cmd = "cd " . s:plugin_path . " && node " . s:plugin_path . "runner.js"
+let s:cmd = "cd " . s:plugin_path . " && ./runner.js"
 
 " FindRc() will try to find a .jshintrc up the current path string
 " If it cannot find one it will try looking in the home directory
@@ -79,7 +79,7 @@ let s:cmd = "cd " . s:plugin_path . " && node " . s:plugin_path . "runner.js"
 if !exists("*s:FindRc")
   function s:FindRc(path)
     let l:filename = '/.jshintrc'
-    let l:jshintrc_file = a:path . l:filename
+    let l:jshintrc_file = fnamemodify('.jshintrc', ':p')
     if filereadable(l:jshintrc_file)
       let s:jshintrc_file = l:jshintrc_file
     elseif len(a:path) > 1
