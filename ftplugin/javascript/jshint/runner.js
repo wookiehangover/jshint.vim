@@ -1,4 +1,4 @@
-'use strict';
+#!/usr/bin/env node
 
 var jshint = require('jshint').JSHINT,
   puts = require('util').puts,
