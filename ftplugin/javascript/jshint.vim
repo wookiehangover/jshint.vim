@@ -69,8 +69,10 @@ noremap <buffer><silent> <C-R> <C-R>:JSHintUpdate<CR>
 let s:plugin_path = s:install_dir . "/jshint/"
 if has('win32')
   let s:plugin_path = substitute(s:plugin_path, '/', '\', 'g')
+  let s:cmd = "cd " . s:plugin_path . " && node runner.js"
+else
+  let s:cmd = "cd " . s:plugin_path . " && ./runner.js"
 endif
-let s:cmd = "cd " . s:plugin_path . " && ./runner.js"
 
 " FindRc() will try to find a .jshintrc up the current path string
 " If it cannot find one it will try looking in the home directory
