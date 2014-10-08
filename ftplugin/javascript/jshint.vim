@@ -12,6 +12,11 @@ else
   let b:did_jshint_plugin = 1
 endif
 
+" Bail out for vim-fugitive file paths...
+if stridx(expand("%:p"), "fugitive:///") == 0
+  finish
+endif
+
 let s:install_dir = expand('<sfile>:p:h')
 
 au BufLeave <buffer> call s:JSHintClear()
