@@ -1,4 +1,3 @@
-
 " Global Options
 "
 " Enable/Disable highlighting of errors in source.
@@ -83,7 +82,7 @@ if !exists("*s:FindRc")
     if filereadable(l:jshintrc_file)
       let s:jshintrc_file = l:jshintrc_file
     elseif len(a:path) > 1
-      call s:FindRc(fnamemodify(a:path, ":h:h"))
+      call s:FindRc(fnamemodify(a:path, ":h"))
     else
       let l:jshintrc_file = expand('~') . l:filename
       if filereadable(l:jshintrc_file)
