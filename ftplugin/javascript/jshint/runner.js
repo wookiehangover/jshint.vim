@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 
-var jshint = require('jshint').JSHINT,
-  puts = require('util').puts,
-  stdin = process.openStdin(),
-  fs = require('fs'),
-  jshintrc = process.argv[2] ? fs.readFileSync(process.argv[2], 'utf8') : '',
-  body = [];
+var jshint = require('jshint').JSHINT;
+var puts = require('util').puts;
+var stdin = process.openStdin();
+var fs = require('fs');
+var jshintrc = process.argv[2] ? fs.readFileSync(process.argv[2], 'utf8') : '';
+var body = [];
+
+var docblock = require('jstransform/src/docblock');
+var react = require('react-tools');
 
 function allcomments(s) {
   return (/^(?:\s*\/\/[^\n]*\s*|\s*\/\*(?:[^\*]|\*(?!\/))*\*\/\s*)*$/).test(s);
@@ -53,7 +56,17 @@ stdin.on('end', function() {
     delete options.globals;
   }
 
-  if( jshint( prefix + body.join(''), options, globals ) ){
+  var source = body.join('');
+  var hasDocblock = docblock.parseAsObject(docblock.extract(source)).jsx;
+
+  if (hasDocblock) try {
+    source = react.transform(source, {harmony: true});
+  } catch(e) {
+    puts('Error parsing React JSX');
+    return;
+  }
+
+  if( jshint( prefix + source, options, globals ) ){
     return;
   }
 
