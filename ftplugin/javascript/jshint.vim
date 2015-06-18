@@ -83,7 +83,7 @@ let s:cmd = "cd " . s:plugin_path . " && ./runner.js"
 if !exists("*s:FindRc")
   function s:FindRc(path)
     let l:filename = '/.jshintrc'
-    let l:jshintrc_file = fnamemodify('.jshintrc', ':p')
+    let l:jshintrc_file = a:path . '/.jshintrc'
     if filereadable(l:jshintrc_file)
       let s:jshintrc_file = l:jshintrc_file
     elseif len(a:path) > 1
