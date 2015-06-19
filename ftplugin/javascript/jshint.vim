@@ -85,15 +85,15 @@ if !exists("*s:FindRc")
     let l:filename = '/.jshintrc'
     let l:jshintrc_file = fnamemodify('.jshintrc', ':p')
     if filereadable(l:jshintrc_file)
-      let s:jshintrc_file = l:jshintrc_file
+      let b:jshintrc_file = l:jshintrc_file
     elseif len(a:path) > 1
       call s:FindRc(fnamemodify(a:path, ":h"))
     else
       let l:jshintrc_file = expand('~') . l:filename
       if filereadable(l:jshintrc_file)
-        let s:jshintrc_file = l:jshintrc_file
+        let b:jshintrc_file = l:jshintrc_file
       else
-        let s:jshintrc_file = ''
+        let b:jshintrc_file = ''
       end
     endif
   endfun
@@ -169,7 +169,7 @@ function! s:JSHint()
     return
   endif
 
-  let b:jshint_output = system(s:cmd . " " . s:jshintrc_file, lines . "\n")
+  let b:jshint_output = system(s:cmd . " " . b:jshintrc_file, lines . "\n")
   if v:shell_error
     echoerr 'could not invoke JSHint: '
     echom b:jshint_output
