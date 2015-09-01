@@ -17,13 +17,13 @@ If you're old school or not into pathogen, there is a Makefile to copy everythin
 
 Add to vimrc:
 
-`Bundle "wookiehangover/jshint.vim"`
+`Plugin "wookiehangover/jshint.vim"`
 
 And install it:
 
 ```vim
 :so ~/.vimrc
-:BundleInstall
+:PluginInstall
 ```
 
 ### Install with [pathogen](https://github.com/tpope/vim-pathogen)
