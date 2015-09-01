@@ -11,13 +11,16 @@ exec("git log --format='%H|%h|%an|%s' " + version + "..HEAD", { silent: true }, 
     return void console.log("git log return code is non-zero");
 
   var commits = output.split("\n")
-    .filter(function (cmt) { return cmt.trim() !== "" })
-    .map(function (cmt) { return cmt.split("|") });
+    .filter(function (cmt) { return cmt.trim() !== ""; })
+    .map(function (cmt) { return cmt.split("|"); });
 
   var html = "";
   var authors = {};
 
   commits.forEach(function (cmt) {
+    if (cmt[3].indexOf("Merge") === 0) {
+      return;
+    }
     var tr = "";
     tr += "<td class='commit'><a href='https://github.com/jshint/jshint/commit/" + cmt[0] + "'>" + cmt[1] + "</a></td>";
     tr += "<td class='desc'>" + cmt[3].replace(/(#(\d+))/, "<a href='https://github.com/jshint/jshint/issues/$2/'>$1</a>") + "</td>";
