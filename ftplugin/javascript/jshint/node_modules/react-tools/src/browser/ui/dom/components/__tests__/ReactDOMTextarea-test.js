@@ -19,8 +19,7 @@
 
 "use strict";
 
-/*jshint evil:true */
-
+var emptyFunction = require('emptyFunction');
 var mocks = require('mocks');
 
 describe('ReactDOMTextarea', function() {
@@ -86,6 +85,14 @@ describe('ReactDOMTextarea', function() {
     expect(node.value).toBe('foobar');
   });
 
+  it('should not render value as an attribute', function() {
+    var stub = <textarea value="giraffe" onChange={emptyFunction} />;
+    stub = renderTextarea(stub);
+    var node = stub.getDOMNode();
+
+    expect(node.getAttribute('value')).toBe(null);
+  });
+
   it('should display `value` of number 0', function() {
     var stub = <textarea value={0} />;
     stub = renderTextarea(stub);
@@ -95,29 +102,29 @@ describe('ReactDOMTextarea', function() {
   });
 
   it('should allow setting `value` to `giraffe`', function() {
-    var stub = <textarea value="giraffe" />;
+    var stub = <textarea value="giraffe" onChange={emptyFunction} />;
     stub = renderTextarea(stub);
     var node = stub.getDOMNode();
 
     expect(node.value).toBe('giraffe');
 
-    stub.replaceProps({value: 'gorilla'});
+    stub.replaceProps({value: 'gorilla', onChange: emptyFunction});
     expect(node.value).toEqual('gorilla');
   });
 
   it('should allow setting `value` to `true`', function() {
-    var stub = <textarea value="giraffe" />;
+    var stub = <textarea value="giraffe" onChange={emptyFunction} />;
     stub = renderTextarea(stub);
     var node = stub.getDOMNode();
 
     expect(node.value).toBe('giraffe');
 
-    stub.replaceProps({value: true});
+    stub.replaceProps({value: true, onChange: emptyFunction});
     expect(node.value).toEqual('true');
   });
 
   it('should allow setting `value` to `false`', function() {
-    var stub = <textarea value="giraffe" />;
+    var stub = <textarea value="giraffe" onChange={emptyFunction} />;
     stub = renderTextarea(stub);
     var node = stub.getDOMNode();
 
@@ -128,7 +135,7 @@ describe('ReactDOMTextarea', function() {
   });
 
   it('should allow setting `value` to `objToString`', function() {
-    var stub = <textarea value="giraffe" />;
+    var stub = <textarea value="giraffe" onChange={emptyFunction} />;
     stub = renderTextarea(stub);
     var node = stub.getDOMNode();
 
@@ -139,12 +146,12 @@ describe('ReactDOMTextarea', function() {
         return "foo";
       }
     };
-    stub.replaceProps({value: objToString});
+    stub.replaceProps({value: objToString, onChange: emptyFunction});
     expect(node.value).toEqual('foo');
   });
 
   it('should properly control a value of number `0`', function() {
-    var stub = <textarea value={0} />;
+    var stub = <textarea value={0} onChange={emptyFunction} />;
     stub = renderTextarea(stub);
     var node = stub.getDOMNode();
 

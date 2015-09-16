@@ -68,6 +68,14 @@ describe('CSSPropertyOperations', function() {
     })).toBe('left:0;margin:16px;opacity:0.5;padding:4px;');
   });
 
+  it('should trim values so `px` will be appended correctly', function() {
+    expect(CSSPropertyOperations.createMarkupForStyles({
+      margin: '16 ',
+      opacity: 0.5,
+      padding: ' 4 '
+    })).toBe('margin:16px;opacity:0.5;padding:4px;');
+  });
+
   it('should not append `px` to styles that might need a number', function() {
     var CSSProperty = require('CSSProperty');
     var unitlessProperties = Object.keys(CSSProperty.isUnitlessNumber);
@@ -77,6 +85,13 @@ describe('CSSPropertyOperations', function() {
       expect(CSSPropertyOperations.createMarkupForStyles(styles))
         .toMatch(/:1;$/);
     });
+  });
+
+  it('should create vendor-prefixed markup correctly', function() {
+    expect(CSSPropertyOperations.createMarkupForStyles({
+      msTransition: 'none',
+      MozTransition: 'none'
+    })).toBe('-ms-transition:none;-moz-transition:none;');
   });
 
   it('should set style attribute when styles exist', function() {

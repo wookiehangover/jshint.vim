@@ -24,6 +24,7 @@ var mocks = require('mocks');
 describe('ReactMount', function() {
   var React = require('React');
   var ReactMount = require('ReactMount');
+  var ReactTestUtils = require('ReactTestUtils');
 
   describe('constructAndRenderComponentByID', function() {
     it('throws if given an id for a component that doesn\'t exist', function() {
@@ -35,6 +36,29 @@ describe('ReactMount', function() {
         );
       }).toThrow();
     });
+  });
+
+  it('throws when given a factory', function() {
+    expect(function() {
+      ReactTestUtils.renderIntoDocument(React.DOM.div);
+    }).toThrow(
+      'Invariant Violation: renderComponent(): Invalid component descriptor. ' +
+      'Instead of passing a component class, make sure to instantiate it ' +
+      'first by calling it with props.'
+    );
+
+    var Component = React.createClass({
+      render: function() {
+        return <div />;
+      }
+    });
+    expect(function() {
+      ReactTestUtils.renderIntoDocument(Component);
+    }).toThrow(
+      'Invariant Violation: renderComponent(): Invalid component descriptor. ' +
+      'Instead of passing a component class, make sure to instantiate it ' +
+      'first by calling it with props.'
+    );
   });
 
   it('should render different components in same root', function() {
@@ -81,5 +105,13 @@ describe('ReactMount', function() {
     expect(container.firstChild.innerHTML).toBe('blue');
     expect(mockMount.mock.calls.length).toBe(2);
     expect(mockUnmount.mock.calls.length).toBe(1);
+  });
+
+  it('should reuse markup if rendering to the same target twice', function() {
+    var container = document.createElement('container');
+    var instance1 = React.renderComponent(<div />, container);
+    var instance2 = React.renderComponent(<div />, container);
+
+    expect(instance1 === instance2).toBe(true);
   });
 });

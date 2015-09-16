@@ -70,7 +70,7 @@ describe('ReactDOMComponent', function() {
     });
 
     it("should update styles when mutating style object", function() {
-      var styles = { display: 'none', fontFamily: 'Arial', opacity: 0 };
+      var styles = { display: 'none', fontFamily: 'Arial', lineHeight: 1.2 };
       var stub = ReactTestUtils.renderIntoDocument(<div style={styles} />);
 
       var stubStyle = stub.getDOMNode().style;
@@ -82,21 +82,26 @@ describe('ReactDOMComponent', function() {
       stub.receiveComponent({props: { style: styles }}, transaction);
       expect(stubStyle.display).toEqual('block');
       expect(stubStyle.fontFamily).toEqual('Arial');
-      expect(stubStyle.opacity).toEqual('0');
+      expect(stubStyle.lineHeight).toEqual('1.2');
 
       styles.fontFamily = 'Helvetica';
 
       stub.receiveComponent({props: { style: styles }}, transaction);
       expect(stubStyle.display).toEqual('block');
       expect(stubStyle.fontFamily).toEqual('Helvetica');
-      expect(stubStyle.opacity).toEqual('0');
+      expect(stubStyle.lineHeight).toEqual('1.2');
 
-      styles.opacity = 0.5;
+      styles.lineHeight = 0.5;
 
       stub.receiveComponent({props: { style: styles }}, transaction);
       expect(stubStyle.display).toEqual('block');
       expect(stubStyle.fontFamily).toEqual('Helvetica');
-      expect(stubStyle.opacity).toEqual('0.5');
+      expect(stubStyle.lineHeight).toEqual('0.5');
+
+      stub.receiveComponent({props: { style: undefined }}, transaction);
+      expect(stubStyle.display).toBe('');
+      expect(stubStyle.fontFamily).toBe('');
+      expect(stubStyle.lineHeight).toBe('');
     });
 
     it("should update styles if initially null", function() {
@@ -252,6 +257,12 @@ describe('ReactDOMComponent', function() {
       expect(genMarkup({ className: 'a b' })).toHaveAttribute('class', 'a b');
       expect(genMarkup({ className: '' })).toHaveAttribute('class', '');
     });
+
+    it("should escape style names and values", function() {
+      expect(genMarkup({
+        style: {'b&ckground': '<3'}
+      })).toHaveAttribute('style', 'b&amp;ckground:&lt;3;');
+    });
   });
 
   describe('createContentMarkup', function() {
@@ -307,8 +318,8 @@ describe('ReactDOMComponent', function() {
       var ReactDOMComponent = require('ReactDOMComponent');
       var ReactReconcileTransaction = require('ReactReconcileTransaction');
 
-      var StubNativeComponent = function(initialProps) {
-        ReactComponent.Mixin.construct.call(this, initialProps);
+      var StubNativeComponent = function(descriptor) {
+        ReactComponent.Mixin.construct.call(this, descriptor);
       };
       mixInto(StubNativeComponent, ReactComponent.Mixin);
       mixInto(StubNativeComponent, ReactDOMComponent.Mixin);
@@ -316,7 +327,12 @@ describe('ReactDOMComponent', function() {
 
       mountComponent = function(props) {
         var transaction = new ReactReconcileTransaction();
-        var stubComponent = new StubNativeComponent(props);
+        var stubComponent = new StubNativeComponent({
+          type: StubNativeComponent,
+          props: props,
+          _owner: null,
+          _context: null
+        });
         return stubComponent.mountComponent('test', transaction, 0);
       };
     });
@@ -340,10 +356,45 @@ describe('ReactDOMComponent', function() {
     });
   });
 
+  describe('updateComponent', function() {
+    var React;
+    var container;
+
+    beforeEach(function() {
+      React = require('React');
+      container = document.createElement('div');
+    });
+
+    it("should validate against multiple children props", function() {
+      React.renderComponent(<div></div>, container);
+
+      expect(function() {
+        React.renderComponent(
+          <div children="" dangerouslySetInnerHTML={{__html: ''}}></div>,
+          container
+        );
+      }).toThrow(
+        'Invariant Violation: Can only set one of `children` or ' +
+        '`props.dangerouslySetInnerHTML`.'
+      );
+    });
+
+    it("should validate against invalid styles", function() {
+      React.renderComponent(<div></div>, container);
+
+      expect(function() {
+        React.renderComponent(<div style={1}></div>, container);
+      }).toThrow(
+        'Invariant Violation: The `style` prop expects a mapping from style ' +
+        'properties to values, not a string.'
+      );
+    });
+  });
+
   describe('unmountComponent', function() {
     it("should clean up listeners", function() {
       var React = require('React');
-      var ReactEventEmitter = require('ReactEventEmitter');
+      var ReactBrowserEventEmitter = require('ReactBrowserEventEmitter');
       var ReactMount = require('ReactMount');
 
       var container = document.createElement('div');
@@ -356,13 +407,13 @@ describe('ReactDOMComponent', function() {
       var rootNode = instance.getDOMNode();
       var rootNodeID = ReactMount.getID(rootNode);
       expect(
-        ReactEventEmitter.getListener(rootNodeID, 'onClick')
+        ReactBrowserEventEmitter.getListener(rootNodeID, 'onClick')
       ).toBe(callback);
 
       React.unmountComponentAtNode(container);
 
       expect(
-        ReactEventEmitter.getListener(rootNodeID, 'onClick')
+        ReactBrowserEventEmitter.getListener(rootNodeID, 'onClick')
       ).toBe(undefined);
     });
   });

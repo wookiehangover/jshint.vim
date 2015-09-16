@@ -125,8 +125,8 @@ describe('ReactCSSTransitionGroup', function() {
     expect(a.getDOMNode().childNodes[0].id).toBe('three');
     expect(a.getDOMNode().childNodes[1].id).toBe('two');
   });
-  return;
-  it('should work with no children', function () {
+
+  it('should work with no children', function() {
     React.renderComponent(
       <ReactCSSTransitionGroup transitionName="yolo">
       </ReactCSSTransitionGroup>,
@@ -134,7 +134,7 @@ describe('ReactCSSTransitionGroup', function() {
     );
   });
 
-  it('should work with a null child', function () {
+  it('should work with a null child', function() {
     React.renderComponent(
       <ReactCSSTransitionGroup transitionName="yolo">
         {[null]}
@@ -142,4 +142,43 @@ describe('ReactCSSTransitionGroup', function() {
       container
     );
   });
+
+  it('should transition from one to null', function() {
+    var a = React.renderComponent(
+      <ReactCSSTransitionGroup transitionName="yolo">
+        <span key="one" id="one" />
+      </ReactCSSTransitionGroup>,
+      container
+    );
+    expect(a.getDOMNode().childNodes.length).toBe(1);
+    React.renderComponent(
+      <ReactCSSTransitionGroup transitionName="yolo">
+        {null}
+      </ReactCSSTransitionGroup>,
+      container
+    );
+    // (Here, we expect the original child to stick around but test that no
+    // exception is thrown)
+    expect(a.getDOMNode().childNodes.length).toBe(1);
+    expect(a.getDOMNode().childNodes[0].id).toBe('one');
+  });
+
+  it('should transition from false to one', function() {
+    var a = React.renderComponent(
+      <ReactCSSTransitionGroup transitionName="yolo">
+        {false}
+      </ReactCSSTransitionGroup>,
+      container
+    );
+    expect(a.getDOMNode().childNodes.length).toBe(0);
+    React.renderComponent(
+      <ReactCSSTransitionGroup transitionName="yolo">
+        <span key="one" id="one" />
+      </ReactCSSTransitionGroup>,
+      container
+    );
+    expect(a.getDOMNode().childNodes.length).toBe(1);
+    expect(a.getDOMNode().childNodes[0].id).toBe('one');
+  });
+
 });

@@ -20,7 +20,6 @@
 
 var EventPluginRegistry = require('EventPluginRegistry');
 var EventPluginUtils = require('EventPluginUtils');
-var ExecutionEnvironment = require('ExecutionEnvironment');
 
 var accumulate = require('accumulate');
 var forEachAccumulated = require('forEachAccumulated');
@@ -154,10 +153,6 @@ var EventPluginHub = {
    * @param {?function} listener The callback to store.
    */
   putListener: function(id, registrationName, listener) {
-    invariant(
-      ExecutionEnvironment.canUseDOM,
-      'Cannot call putListener() in a non-DOM environment.'
-    );
     invariant(
       !listener || typeof listener === 'function',
       'Expected %s listener to be a function, instead got type %s',

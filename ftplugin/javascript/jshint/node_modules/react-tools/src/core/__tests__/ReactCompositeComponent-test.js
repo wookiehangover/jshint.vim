@@ -19,20 +19,23 @@
 
 "use strict";
 
-var MorphingComponent;
 var ChildUpdates;
+var MorphingComponent;
 var React;
 var ReactComponent;
 var ReactCurrentOwner;
-var ReactPropTypes;
-var ReactTestUtils;
-var ReactMount;
 var ReactDoNotBindDeprecated;
+var ReactMount;
+var ReactPropTypes;
+var ReactServerRendering;
+var ReactTestUtils;
+var TogglingComponent;
 
 var cx;
 var reactComponentExpect;
 var mocks;
 var warn;
+
 
 describe('ReactCompositeComponent', function() {
 
@@ -48,6 +51,7 @@ describe('ReactCompositeComponent', function() {
     ReactPropTypes = require('ReactPropTypes');
     ReactTestUtils = require('ReactTestUtils');
     ReactMount = require('ReactMount');
+    ReactServerRendering = require('ReactServerRendering');
 
     MorphingComponent = React.createClass({
       getInitialState: function() {
@@ -82,12 +86,53 @@ describe('ReactCompositeComponent', function() {
       }
     });
 
+    TogglingComponent = React.createClass({
+      getInitialState: function() {
+        return {component: this.props.firstComponent};
+      },
+      componentDidMount: function() {
+        console.log(this.getDOMNode());
+        this.setState({component: this.props.secondComponent});
+      },
+      componentDidUpdate: function() {
+        console.log(this.getDOMNode());
+      },
+      render: function() {
+        return this.state.component ? this.state.component() : null;
+      }
+    });
+
     warn = console.warn;
     console.warn = mocks.getMockFunction();
   });
 
   afterEach(function() {
     console.warn = warn;
+  });
+
+  it('should give context for PropType errors in nested components.', () => {
+    // In this test, we're making sure that if a proptype error is found in a
+    // component, we give a small hint as to which parent instantiated that
+    // component as per warnings about key usage in ReactDescriptorValidator.
+    spyOn(console, 'warn');
+    var MyComp = React.createClass({
+      propTypes: {
+        color: ReactPropTypes.string
+      },
+      render: function() {
+        return <div>My color is {this.color}</div>;
+      }
+    });
+    var ParentComp = React.createClass({
+      render: function() {
+        return <MyComp color={123} />;
+      }
+    });
+    ReactTestUtils.renderIntoDocument(<ParentComp />);
+    expect(console.warn.calls[0].args[0]).toBe(
+      'Warning: Invalid prop `color` of type `number` supplied to `MyComp`, ' +
+      'expected `string`. Check the render method of `ParentComp`.'
+    );
   });
 
   it('should support rendering to different child types over time', function() {
@@ -107,6 +152,160 @@ describe('ReactCompositeComponent', function() {
     reactComponentExpect(instance)
       .expectRenderedChild()
       .toBeDOMComponentWithTag('a');
+  });
+
+  it('should render null and false as a noscript tag under the hood', () => {
+    var Component1 = React.createClass({
+      render: function() {
+        return null;
+      }
+    });
+    var Component2 = React.createClass({
+      render: function() {
+        return false;
+      }
+    });
+
+    var instance1 = ReactTestUtils.renderIntoDocument(<Component1 />);
+    var instance2 = ReactTestUtils.renderIntoDocument(<Component2 />);
+    reactComponentExpect(instance1)
+      .expectRenderedChild()
+      .toBeDOMComponentWithTag('noscript');
+    reactComponentExpect(instance2)
+      .expectRenderedChild()
+      .toBeDOMComponentWithTag('noscript');
+  });
+
+  it('should still throw when rendering to undefined', () => {
+    var Component = React.createClass({
+      render: function() {}
+    });
+    expect(function() {
+      ReactTestUtils.renderIntoDocument(<Component />);
+    }).toThrow(
+      'Invariant Violation: Component.render(): A valid ReactComponent must ' +
+      'be returned. You may have returned undefined, an array or some other ' +
+      'invalid object.'
+    );
+  });
+
+  it('should be able to switch between rendering null and a normal tag', () => {
+    spyOn(console, 'log');
+
+    var instance1 =
+      <TogglingComponent
+        firstComponent={null}
+        secondComponent={React.DOM.div}
+      />;
+    var instance2 =
+      <TogglingComponent
+        firstComponent={React.DOM.div}
+        secondComponent={null}
+      />;
+
+    expect(function() {
+      ReactTestUtils.renderIntoDocument(instance1);
+      ReactTestUtils.renderIntoDocument(instance2);
+    }).not.toThrow();
+
+    expect(console.log.argsForCall.length).toBe(4);
+    expect(console.log.argsForCall[0][0]).toBe(null);
+    expect(console.log.argsForCall[1][0].tagName).toBe('DIV');
+    expect(console.log.argsForCall[2][0].tagName).toBe('DIV');
+    expect(console.log.argsForCall[3][0]).toBe(null);
+  });
+
+  it('should distinguish between a script placeholder and an actual script tag',
+    () => {
+      spyOn(console, 'log');
+
+      var instance1 =
+        <TogglingComponent
+          firstComponent={null}
+          secondComponent={React.DOM.script}
+        />;
+      var instance2 =
+        <TogglingComponent
+          firstComponent={React.DOM.script}
+          secondComponent={null}
+        />;
+
+      expect(function() {
+        ReactTestUtils.renderIntoDocument(instance1);
+      }).not.toThrow();
+      expect(function() {
+        ReactTestUtils.renderIntoDocument(instance2);
+      }).not.toThrow();
+
+      expect(console.log.argsForCall.length).toBe(4);
+      expect(console.log.argsForCall[0][0]).toBe(null);
+      expect(console.log.argsForCall[1][0].tagName).toBe('SCRIPT');
+      expect(console.log.argsForCall[2][0].tagName).toBe('SCRIPT');
+      expect(console.log.argsForCall[3][0]).toBe(null);
+    }
+  );
+
+  it('should have getDOMNode return null when multiple layers of composite ' +
+    'components render to the same null placeholder', () => {
+      spyOn(console, 'log');
+
+      var GrandChild = React.createClass({
+        render: function() {
+          return null;
+        }
+      });
+
+      var Child = React.createClass({
+        render: function() {
+          return <GrandChild />;
+        }
+      });
+
+      var instance1 =
+        <TogglingComponent
+          firstComponent={React.DOM.div}
+          secondComponent={Child}
+        />;
+      var instance2 =
+        <TogglingComponent
+          firstComponent={Child}
+          secondComponent={React.DOM.div}
+        />;
+
+      expect(function() {
+        ReactTestUtils.renderIntoDocument(instance1);
+      }).not.toThrow();
+      expect(function() {
+        ReactTestUtils.renderIntoDocument(instance2);
+      }).not.toThrow();
+
+      expect(console.log.argsForCall.length).toBe(4);
+      expect(console.log.argsForCall[0][0].tagName).toBe('DIV');
+      expect(console.log.argsForCall[1][0]).toBe(null);
+      expect(console.log.argsForCall[2][0]).toBe(null);
+      expect(console.log.argsForCall[3][0].tagName).toBe('DIV');
+    }
+  );
+
+  it('should not thrash a server rendered layout with client side one', () => {
+    var Child = React.createClass({
+      render: function() {
+        return null;
+      }
+    });
+    var Parent = React.createClass({
+      render: function() {
+        return <div><Child /></div>;
+      }
+    });
+
+    var markup = ReactServerRendering.renderComponentToString(<Parent />);
+    var container = document.createElement('div');
+    container.innerHTML = markup;
+
+    spyOn(console, 'warn');
+    React.renderComponent(<Parent />, container);
+    expect(console.warn).not.toHaveBeenCalled();
   });
 
   it('should react to state changes from callbacks', function() {
@@ -200,6 +399,19 @@ describe('ReactCompositeComponent', function() {
     // This one is the weird one
     expect(explicitlyNotBound.call(mountedInstance)).toBe(mountedInstance);
 
+  });
+
+  it('should not pass this to getDefaultProps', function() {
+    var Component = React.createClass({
+      getDefaultProps: function() {
+        expect(this.render).not.toBeDefined();
+        return {};
+      },
+      render: function() {
+        return <div />;
+      }
+    });
+    ReactTestUtils.renderIntoDocument(<Component />);
   });
 
   it('should use default values for undefined props', function() {
@@ -402,12 +614,7 @@ describe('ReactCompositeComponent', function() {
     });
 
     var instance = <Component />;
-    expect(function() {
-      instance.forceUpdate();
-    }).toThrow(
-      'Invariant Violation: forceUpdate(...): Can only force an update on ' +
-      'mounted or mounting components.'
-    );
+    expect(instance.forceUpdate).not.toBeDefined();
 
     instance = React.renderComponent(instance, container);
     expect(function() {
@@ -700,6 +907,38 @@ describe('ReactCompositeComponent', function() {
     expect(React.isValidClass(FnComponent)).toBe(false);
     expect(React.isValidClass(NullComponent)).toBe(false);
     expect(React.isValidClass(TrickFnComponent)).toBe(false);
+  });
+
+  it('should warn when shouldComponentUpdate() returns undefined', function() {
+    var warn = console.warn;
+    console.warn = mocks.getMockFunction();
+
+    try {
+      var Component = React.createClass({
+        getInitialState: function () {
+          return {bogus: false};
+        },
+
+        shouldComponentUpdate: function() {
+          return undefined;
+        },
+
+        render: function() {
+          return <div />;
+        }
+      });
+
+      var instance = ReactTestUtils.renderIntoDocument(<Component />);
+      instance.setState({bogus: true});
+
+      expect(console.warn.mock.calls.length).toBe(1);
+      expect(console.warn.mock.calls[0][0]).toBe(
+        'Component.shouldComponentUpdate(): Returned undefined instead of a ' +
+        'boolean value. Make sure to return true or false.'
+      );
+    } finally {
+      console.warn = warn;
+    }
   });
 
   it('should warn when mispelling shouldComponentUpdate', function() {
@@ -1009,7 +1248,10 @@ describe('ReactCompositeComponent', function() {
         abc: 'def',
         def: 0,
         ghi: null,
-        jkl: 'mno'
+        jkl: 'mno',
+        pqr: function() {
+          return this;
+        }
       },
 
       render: function() {
@@ -1026,6 +1268,8 @@ describe('ReactCompositeComponent', function() {
     expect(Component.ghi).toBe(null);
     expect(instance.constructor.jkl).toBe('mno');
     expect(Component.jkl).toBe('mno');
+    expect(instance.constructor.pqr()).toBe(Component.type);
+    expect(Component.pqr()).toBe(Component.type);
   });
 
   it('should support statics in mixins', function() {
@@ -1154,39 +1398,6 @@ describe('ReactCompositeComponent', function() {
       instance = ReactTestUtils.renderIntoDocument(instance);
   });
 
-  it('should warn if an umounted component is touched', function() {
-    spyOn(console, 'warn');
-
-    var ComponentClass = React.createClass({
-      getInitialState: function() {
-        return {valueToReturn: 'hi'};
-      },
-      someMethod: function() {
-        return this;
-      },
-      someOtherMethod: function() {
-        return this;
-      },
-      render: function() {
-        return <div></div>;
-      }
-    });
-
-    var descriptor = <ComponentClass />;
-    var instance = ReactTestUtils.renderIntoDocument(descriptor);
-    instance.someMethod();
-    expect(console.warn.argsForCall.length).toBe(0);
-
-    var unmountedInstance = <ComponentClass />;
-    unmountedInstance.someMethod();
-    expect(console.warn.argsForCall.length).toBe(1);
-
-    var unmountedInstance2 = <ComponentClass />;
-    unmountedInstance2.someOtherMethod = 'override';
-    expect(console.warn.argsForCall.length).toBe(2);
-    expect(unmountedInstance2.someOtherMethod).toBe('override');
-  });
-
   it('should allow static methods called using type property', function() {
     spyOn(console, 'warn');
 
@@ -1207,6 +1418,30 @@ describe('ReactCompositeComponent', function() {
     var descriptor = <ComponentClass />;
     expect(descriptor.type.someStaticMethod()).toBe('someReturnValue');
     expect(console.warn.argsForCall.length).toBe(0);
+  });
+
+  it('should disallow nested render calls', function() {
+    spyOn(console, 'warn');
+    var Inner = React.createClass({
+      render: function() {
+        return <div />;
+      }
+    });
+    var Outer = React.createClass({
+      render: function() {
+        ReactTestUtils.renderIntoDocument(<Inner />);
+        return <div />;
+      }
+    });
+
+    ReactTestUtils.renderIntoDocument(<Outer />);
+    expect(console.warn.argsForCall.length).toBe(1);
+    expect(console.warn.argsForCall[0][0]).toBe(
+      'Warning: _renderNewRootComponent(): Render methods should ' +
+      'be a pure function of props and state; triggering nested component ' +
+      'updates from render is not allowed. If necessary, trigger nested ' +
+      'updates in componentDidUpdate.'
+    );
   });
 
 });

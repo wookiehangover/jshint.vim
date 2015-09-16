@@ -49,9 +49,15 @@ var uniqueKeys = create(null);
 function makeUniqueKey() {
   // Collisions are highly unlikely, but this module is in the business of
   // making guarantees rather than safe bets.
-  do var uniqueKey = strSlice.call(numToStr.call(rand(), 36), 2);
+  do var uniqueKey = internString(strSlice.call(numToStr.call(rand(), 36), 2));
   while (hasOwn.call(uniqueKeys, uniqueKey));
   return uniqueKeys[uniqueKey] = uniqueKey;
+}
+
+function internString(str) {
+  var obj = {};
+  obj[str] = true;
+  return Object.keys(obj)[0];
 }
 
 // External users might find this function useful, but it is not necessary

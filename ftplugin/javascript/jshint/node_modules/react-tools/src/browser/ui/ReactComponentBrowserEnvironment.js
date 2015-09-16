@@ -28,6 +28,7 @@ var ReactReconcileTransaction = require('ReactReconcileTransaction');
 
 var getReactRootElementInContainer = require('getReactRootElementInContainer');
 var invariant = require('invariant');
+var setInnerHTML = require('setInnerHTML');
 
 
 var ELEMENT_NODE_TYPE = 1;
@@ -95,7 +96,7 @@ var ReactComponentBrowserEnvironment = {
               'React attempted to use reuse markup in a container but the ' +
               'checksum was invalid. This generally means that you are ' +
               'using server rendering and the markup generated on the ' +
-              'server was not what the client was expecting. React injected' +
+              'server was not what the client was expecting. React injected ' +
               'new markup to compensate which works but you have lost many ' +
               'of the benefits of server rendering. Instead, figure out ' +
               'why the markup being generated is different on the client ' +
@@ -113,7 +114,7 @@ var ReactComponentBrowserEnvironment = {
           'See renderComponentToString() for server rendering.'
       );
 
-      container.innerHTML = markup;
+      setInnerHTML(container, markup);
     }
   )
 };
