@@ -163,8 +163,8 @@ function! s:JSHint()
     let b:lastline = a:lastline
   endif
 
-  let b:qf_list = []
-  let b:qf_window_count = -1
+  let b:loc_list = []
+  let b:loc_window_count = -1
 
   let lines = join(getline(b:firstline, b:lastline), "\n")
   if len(lines) == 0
@@ -197,27 +197,27 @@ function! s:JSHint()
       " Add line to match list
       call add(b:matched, s:matchDict)
 
-      " Store the error for the quickfix window
-      let l:qf_item = {}
-      let l:qf_item.bufnr = bufnr('%')
-      let l:qf_item.filename = expand('%')
-      let l:qf_item.lnum = l:line
-      let l:qf_item.text = l:errorMessage
-      let l:qf_item.type = l:errorType
+      " Store the error for the location window
+      let l:loc_item = {}
+      let l:loc_item.bufnr = bufnr('%')
+      let l:loc_item.filename = expand('%')
+      let l:loc_item.lnum = l:line
+      let l:loc_item.text = l:errorMessage
+      let l:loc_item.type = l:errorType
 
-      " Add line to quickfix list
-      call add(b:qf_list, l:qf_item)
+      " Add line to location list
+      call add(b:loc_list, l:loc_item)
     endif
   endfor
 
-  if exists("s:jshint_qf")
-    " if jshint quickfix window is already created, reuse it
-    call s:ActivateJSHintQuickFixWindow()
-    call setqflist(b:qf_list, 'r')
+  if exists("s:jshint_loc")
+    " if jshint location window is already created, reuse it
+    call s:ActivateJSHintLocationWindow()
+    call setloclist(0, b:loc_list, 'r')
   else
-    " one jshint quickfix window for all buffers
-    call setqflist(b:qf_list, '')
-    let s:jshint_qf = s:GetQuickFixStackCount()
+    " one jshint location window for all buffers
+    call setloclist(0, b:loc_list, '')
+    let s:jshint_loc = s:GetLocationStackCount()
   endif
   let b:cleared = 0
 endfunction
@@ -247,40 +247,42 @@ if !exists("*s:GetJSHintMessage")
   endfunction
 endif
 
-if !exists("*s:GetQuickFixStackCount")
-    function s:GetQuickFixStackCount()
+if !exists("*s:GetLocationStackCount")
+    function s:GetLocationStackCount()
         let l:stack_count = 0
         try
-            silent colder 9
+            silent lolder 9
         catch /E380:/
+        catch /E776:/
         endtry
 
         try
             for i in range(9)
-                silent cnewer
+                silent lnewer
                 let l:stack_count = l:stack_count + 1
             endfor
         catch /E381:/
+        catch /E776:/
             return l:stack_count
         endtry
     endfunction
 endif
 
-if !exists("*s:ActivateJSHintQuickFixWindow")
-    function s:ActivateJSHintQuickFixWindow()
+if !exists("*s:ActivateJSHintLocationWindow")
+    function s:ActivateJSHintLocationWindow()
         try
-            silent colder 9 " go to the bottom of quickfix stack
+            silent lolder 9 " go to the bottom of location stack
         catch /E380:/
+        catch /E776:/
         endtry
 
-        if s:jshint_qf > 0
+        if s:jshint_loc > 0
             try
-                exe "silent cnewer " . s:jshint_qf
+                exe "silent lnewer " . s:jshint_loc
             catch /E381:/
+            catch /E776:/
                 echoerr "Could not activate JSHint Quickfix Window."
             endtry
         endif
     endfunction
 endif
-
-
