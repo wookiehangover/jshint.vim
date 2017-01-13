@@ -220,6 +220,7 @@ function! s:JSHint()
     let s:jshint_qf = s:GetQuickFixStackCount()
   endif
   let b:cleared = 0
+  redraw
 endfunction
 
 let b:showing_message = 0
