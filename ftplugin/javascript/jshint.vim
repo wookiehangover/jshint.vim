@@ -216,7 +216,7 @@ function! s:JSHint()
     call setqflist(b:qf_list, 'r')
   else
     " one jshint quickfix window for all buffers
-    call setqflist(b:qf_list, '')
+    call setqflist(b:qf_list, ' ')
     let s:jshint_qf = s:GetQuickFixStackCount()
   endif
   let b:cleared = 0
