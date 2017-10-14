@@ -17,7 +17,7 @@ If you're old school or not into pathogen, there is a Makefile to copy everythin
 
 Add to vimrc:
 
-`Plugin "wookiehangover/jshint.vim"`
+`Plugin 'wookiehangover/jshint.vim'`
 
 And install it:
 
